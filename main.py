@@ -5,6 +5,27 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.metrics import classification_report, accuracy_score
 
+def plot_classification_report(report):
+    """
+    Plot the classification report as a heatmap.
+    """
+    report_data = []
+    lines = report.split('\n')
+    for line in lines[2:-3]:
+        row = {}
+        row_data = line.split()
+        row['class'] = row_data[0]
+        row['precision'] = float(row_data[1])
+        row['recall'] = float(row_data[2])
+        row['f1_score'] = float(row_data[3])
+        row['support'] = int(row_data[4])
+        report_data.append(row)
+    dataframe = pd.DataFrame.from_dict(report_data)
+    
+    sns.heatmap(dataframe.set_index('class').iloc[:, :3], annot=True, cmap='Blues')
+    plt.title('Classification Report')
+    plt.show()
+
 def train_and_evaluate():
     # TODO: add arguments and argument parsing for high-level configuration
 
@@ -22,6 +43,7 @@ def train_and_evaluate():
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
+
 
     # Train a Support Vector Machine (SVM) model
     # TODO: consider using a different model
